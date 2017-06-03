@@ -1,5 +1,8 @@
 package baitcontrol;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -9,6 +12,7 @@ import com.pi4j.wiringpi.Serial;
 
 import baitcontrol.interfaces.GpsEvent;
 import baitcontrol.interfaces.GpsEventListener;
+import baitcontrol.interfaces.Utils;
 
 public abstract class GPSController implements Runnable {
 
@@ -31,9 +35,51 @@ public abstract class GPSController implements Runnable {
 		}
 	}
 
+	public void speedHasBeenUpdated() {
+		if (this.time != null && this.lat > -1 && this.lng > -1 && this.speed > -1) {
+			GpsEvent evt = new GpsEvent(this.time, this.lat, this.lng, this.speed, this.angle);
+
+			speedListeners.stream().forEach(x -> x.notify(evt));
+			try (FileWriter fw = new FileWriter("/media/pi/SD_CARD/flight_" + Utils.dateToString(BaitController.startTime) + "speed_update.txt",
+					true);
+					BufferedWriter bw = new BufferedWriter(fw);
+					PrintWriter out = new PrintWriter(bw)) {
+				// System.out.println(text);
+				out.println(evt.toString());
+				out.flush();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+		}
+	}
+
 	public void gpsHasBeenUpdated() {
 		if (this.time != null && this.lat > -1 && this.lng > -1 && this.speed > -1) {
-			speedListeners.stream().forEach(x -> x.notify(new GpsEvent(this.time, this.lat, this.lng, this.speed)));
+			GpsEvent evt = new GpsEvent(this.time, this.lat, this.lng, this.speed, this.angle);
+			try (FileWriter fw = new FileWriter("/media/pi/SD_CARD/flight_" + Utils.dateToString(BaitController.startTime) + "gps_update.txt",
+					true);
+					BufferedWriter bw = new BufferedWriter(fw);
+					PrintWriter out = new PrintWriter(bw)) {
+				// System.out.println(text);
+				out.println(evt.toString());
+				out.flush();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	public void nmeaHasBeenUpdated(String line) {
+		try (FileWriter fw = new FileWriter("/media/pi/SD_CARD/flight_" + Utils.dateToString(BaitController.startTime) + "nmea_update.txt",
+				true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
+			System.out.println(line);
+			out.println(line);
+			out.flush();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 

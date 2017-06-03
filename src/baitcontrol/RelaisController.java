@@ -12,6 +12,7 @@ public class RelaisController {
 	private RelaisController(GpioController gpio) {
 		this.pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04, "MyLED", PinState.HIGH);
 		pin.setShutdownOptions(true, PinState.LOW);
+		disableRelais();
 	}
 
 	public static RelaisController getInstance(GpioController gpio) {
@@ -19,10 +20,10 @@ public class RelaisController {
 	}
 
 	public void enableRelais() {
-		this.pin.high();
+		this.pin.low();
 	}
 
 	public void disableRelais() {
-		this.pin.low();
+		this.pin.high();
 	}
 }

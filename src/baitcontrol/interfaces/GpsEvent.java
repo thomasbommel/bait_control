@@ -4,18 +4,23 @@ import java.util.Date;
 
 public class GpsEvent {
 
-	private double speed, lat, lng;
+	private double speed, lat, lng, angle;
 	private Date time;
 
-	public GpsEvent(Date time, double lat, double lng, double speed) {
+	public GpsEvent(Date time, double lat, double lng, double speed, double angle) {
 		this.speed = speed;
 		this.lat = lat;
 		this.lng = lng;
 		this.time = time;
+		this.angle = angle;
 	}
 
 	public double getSpeed() {
 		return speed;
+	}
+
+	public double getAngle() {
+		return angle;
 	}
 
 	public double getLat() {

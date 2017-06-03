@@ -29,4 +29,9 @@ public class Utils {
 		return dateFormat.format(date);
 	}
 
+	public static String dateToTimeString(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss");
+		return dateFormat.format(date);
+	}
+
 }
